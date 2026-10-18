@@ -86,7 +86,7 @@ def test_experiment_3_icp(full_icp):
     kd = {x["kind"]: x for x in r["kinds"]}
     assert kd["gauss"]["exact"] == pytest.approx(0.74, abs=0.08) and kd["laplace"]["exact"] == pytest.approx(0.76, abs=0.08) and abs(kd["gauss"]["exact"] - kd["laplace"]["exact"]) <= 0.12
     text = ev.verdict_icp_experiment(r)[1]
-    assert "Mit nur Beobachtungen gibt ICP die leere Menge (100 % der Läufe)" in text and "mit 5 Umgebungen (n_e = 1 000) findet es die drei Eltern genau in" in text and "α = 0,01 kostet Trefferquote" in text and "Zufallsstreuung bei 50 Läufen etwa ±3 Punkte" in text
+    assert "Mit nur Beobachtungen gibt ICP die leere Menge (100 % der Läufe)" in text and "mit 5 Umgebungen (n_e = 1 000) findet es die drei Eltern genau in" in text and "α = 0,01 gibt " in text and "der Unterschied liegt im Rahmen der Zufallsstreuung" in text and "Zufallsstreuung bei 50 Läufen etwa ±3 Punkte" in text
 
 
 def test_experiment_4_limits(full_limits):

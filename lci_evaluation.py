@@ -317,7 +317,7 @@ def verdict_icp_experiment(res: dict) -> tuple:
     kd = {r["kind"]: r for r in res["kinds"]}
     return "info", (f"Mit nur Beobachtungen gibt ICP die leere Menge ({pct(cum[0]['empty'])} der Läufe); mit {len(cum)} Umgebungen (n_e = {_n(res['n_e'])}) findet es die drei Eltern genau in {pct(cum[-1]['exact'])}, "
                     f"mit n_e = {min(smp)} in {pct(smp[min(smp)]['exact'])}, mit n_e = {_n(max(smp))} in {pct(smp[max(smp)]['exact'])}. Ein falsches Elternteil nennt es bei α = 0,05 in höchstens {pct(max(r['false'] for r in res['cumulative'] + res['sample'] + res['kinds'] + [a for a in res['alpha'] if a['alpha'] == 0.05]))} "
-                    f"der Läufe (Zufallsstreuung bei {res['reps']} Läufen etwa ±3 Punkte). α = 0,01 kostet Trefferquote ({pct(al[0.01]['exact'])}), nicht Abdeckung. Gauß- und Laplace-Rauschen geben dasselbe ({pct(kd['gauss']['exact'])} und {pct(kd['laplace']['exact'])}).")
+                    f"der Läufe (Zufallsstreuung bei {res['reps']} Läufen etwa ±3 Punkte). α = 0,01 gibt {pct(al[0.01]['exact'])} genau (α = 0,05: {pct(al[0.05]['exact'])}; der Unterschied liegt im Rahmen der Zufallsstreuung). Gauß- und Laplace-Rauschen geben dasselbe ({pct(kd['gauss']['exact'])} und {pct(kd['laplace']['exact'])}).")
 
 
 def verdict_limits(res: dict) -> tuple:

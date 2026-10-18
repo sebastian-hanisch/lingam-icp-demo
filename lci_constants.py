@@ -74,7 +74,7 @@ PRESET_HELP = {
     "Laplace-Rauschen (Voreinstellung)": "Die Welt der Linie mit spitzem Rauschen und fünf Umgebungen: LiNGAM findet den ganzen DAG, auch die Richtungen, die PC offen lässt; ICP findet die Eltern des Servicegrads.",
     "Gleichverteiltes Rauschen": "Flaches Rauschen: auch nicht Gauß'sch, LiNGAM findet den DAG.",
     "Gauß-Rauschen": "Gauß'sches Rauschen: LiNGAM kann die Richtungen nicht mehr bestimmen (eine Auswahl wie ein Münzwurf, mit überzähligen Kanten); ICP ändert sich nicht.",
-    "Fast Gauß": "Nur ein Viertel des Rauschens ist Laplace (Exzess-Kurtosis 0,19): Das reicht für LiNGAM nicht, die Richtungen sind kaum besser als Zufall.",
+    "Fast Gauß": "Nur ein Viertel des Rauschens ist Laplace (Exzess-Kurtosis 0,19): Das reicht für LiNGAM im Mittel nicht: Über 50 Läufe sind die Richtungen kaum besser als Zufall (55 %), einzelne Stichproben können besser aussehen.",
     "Wenige Umgebungen": "Ohne die Umgebung „Nachfrage streut“ sind die Nachfrage und der Faktor nicht zu sehen: ICP findet nur das Wetter.",
     "Kleine Umgebungen": "Nur 300 Beobachtungen je Umgebung: Die Invarianztests sind zu schwach, ICP nennt nur einen Teil der Eltern.",
     "Eingriff in den Servicegrad": "Zusätzlich wird der Servicegrad selbst verschoben: Keine Menge ist mehr invariant, ICP gibt die leere Menge zurück.",

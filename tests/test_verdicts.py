@@ -72,7 +72,7 @@ def test_gauss_experiment_verdict(small_gauss):
 def test_icp_experiment_verdict(small_icp):
     kind, text = ev.verdict_icp_experiment(small_icp)
     cum = small_icp["cumulative"]
-    assert kind == "info" and f"gibt ICP die leere Menge ({ev.pct(cum[0]['empty'])} der Läufe)" in text and "mit 5 Umgebungen (n_e = 500)" in text and "mit n_e = 100 in" in text and "α = 0,01 kostet Trefferquote" in text and "Gauß- und Laplace-Rauschen geben dasselbe" in text
+    assert kind == "info" and f"gibt ICP die leere Menge ({ev.pct(cum[0]['empty'])} der Läufe)" in text and "mit 5 Umgebungen (n_e = 500)" in text and "mit n_e = 100 in" in text and "α = 0,01 gibt " in text and "der Unterschied liegt im Rahmen der Zufallsstreuung" in text and "Gauß- und Laplace-Rauschen geben dasselbe" in text
 
 
 def test_limits_verdict(small_limits):

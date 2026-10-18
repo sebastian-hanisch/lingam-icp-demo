@@ -2,7 +2,7 @@
 Sebastian Hanisch - Operations Research und Machine Learning
 
 Fünfzehntes Stück der Linie Kausale Diagramme und Adjustierung. Zwei Wege, die Richtung zu finden, die Beobachtungen allein nicht geben: die Gestalt des Rauschens (LiNGAM: nicht Gauß'sches Rauschen macht den ganzen DAG
-bestimmbar) und Umgebungen mit Eingriffen (invariante Kausalvorhersage: die Eltern des Servicegrads sind die Größen, mit denen seine Verteilung in allen Umgebungen gleich bleibt).
+bestimmbar) und Umgebungen mit Eingriffen (invariante Kausalvorhersage: die Eltern des Servicegrads sind eine Menge von Größen, gegeben derer seine Verteilung in allen Umgebungen gleich bleibt).
 Kern: lci_lingam.py, lci_icp.py, lci_world.py, lci_evaluation.py; PC und NOTEARS als Vergleich: stl_pc.py, nts_notears.py (wortgleich aus Stück 13 und 14).
 
 Lauffähig mit: streamlit run app.py
@@ -103,8 +103,8 @@ st.title("🔀 Über die Äquivalenzklasse hinaus")
 st.markdown(
     """
 **Wie kommt man zur Richtung, wenn Beobachtungen sie nicht geben?** Dies ist das fünfzehnte Stück der Linie **Kausale Diagramme und Adjustierung**. PC (Stück 13) endet bei der Äquivalenzklasse, NOTEARS (Stück 14) richtet Kanten nur,
-solange die Skala die Reihenfolge verrät. Hier zwei Wege, die wirklich etwas Neues hineinstecken: **LiNGAM** nutzt, dass das Rauschen **nicht Gauß'sch** ist (dann ist der ganze DAG aus Beobachtungen bestimmbar, unabhängig von der Skala),
-**invariante Kausalvorhersage (ICP)** nutzt **Umgebungen mit Eingriffen** (die Eltern des Servicegrads sind die Größen, mit denen seine Verteilung in allen Umgebungen gleich bleibt). Beide scheitern leise, wenn ihre Annahme fehlt.
+solange die Skala die Reihenfolge verrät. Hier zwei Wege, die wirklich etwas Neues hineinstecken: **LiNGAM** nutzt, dass das Rauschen **nicht Gauß'sch** ist (dann ist, bei linearem Modell ohne verborgene Ursachen, der ganze DAG aus Beobachtungen bestimmbar, unabhängig von der Skala),
+**invariante Kausalvorhersage (ICP)** nutzt **Umgebungen mit Eingriffen** (die Eltern des Servicegrads sind eine Menge von Größen, gegeben derer seine Verteilung in allen Umgebungen gleich bleibt; ICP nennt die Schnittmenge aller solchen Mengen). Beide scheitern leise, wenn ihre Annahme fehlt.
 
 Weiter unten: das **Paar zum Anschauen**, vier Experimente (**🔬**), **🚧 Wo die Annahmen enden** und der Expander **📐 Mathematische Formulierung**.
 """
@@ -116,7 +116,7 @@ with st.expander("So liest man das Ergebnis", expanded=True):
 1. **Die Welt** (links): die der Linie mit sechs Größen: Saison S → Nachfrage Z → Faktor X → Servicegrad Y, dazu Z → Y, Wetter W → Y und neu die **Beschwerden C** als Wirkung des Servicegrads.
 2. **LiNGAM** (rechts): **grün** richtig gerichtet, **orange** umgekehrt, **rot** überzählig, **grau gestrichelt** fehlend. Bei Gauß-Rauschen ist die Reihenfolge nicht bestimmt, das Ergebnis eine Auswahl.
 3. **Vergleich auf denselben Daten:** PC lässt Kanten ungerichtet, NOTEARS richtet roh nach der Varianz und verliert die Richtungen nach einer Standardisierung, LiNGAM ist skalenfrei.
-4. **ICP** (Abschnitt darunter): Für jede Menge von Größen wird getestet, ob die Verteilung des Servicegrads gegeben diese Größen in allen Umgebungen gleich ist. Die **Schnittmenge** aller angenommenen Mengen sind Eltern, mit Wahrscheinlichkeit höchstens α ein Irrtum.
+4. **ICP** (Abschnitt darunter): Für jede Menge von Größen wird getestet, ob die Verteilung des Servicegrads gegeben diese Größen in allen Umgebungen gleich ist. Die **Schnittmenge** aller angenommenen Mengen sind Eltern, bei gültigen Tests mit Wahrscheinlichkeit höchstens α ein Irrtum.
 5. **Umgebungen** (Seitenleiste): Ohne Eingriffe gibt ICP die leere Menge; ein Eingriff in den Servicegrad selbst verletzt die Annahme.
         """
     )
@@ -142,7 +142,7 @@ with st.sidebar:
     st.markdown("**Daten**")
     n = st.slider("Beobachtungen für LiNGAM", *bounds("n_slider"), step=K.N_STEP, key="n_slider", help="Zeilen der Datenmatrix (nur beobachtet).")
     ne = st.slider("Beobachtungen je Umgebung (ICP)", *bounds("ne_slider"), step=K.NE_STEP, key="ne_slider", help="Je gewählte Umgebung so viele Standorte.")
-    alpha = st.select_slider("Niveau α der Invarianztests", options=K.ALPHAS, key="alpha_slider", help="ICP nennt mit Wahrscheinlichkeit höchstens α eine Größe, die kein Elternteil ist. Kleineres α: weniger Treffer, gleiche Sicherheit.")
+    alpha = st.select_slider("Niveau α der Invarianztests", options=K.ALPHAS, key="alpha_slider", help="ICP nennt mit Wahrscheinlichkeit höchstens α eine Größe, die kein Elternteil ist. Kleineres α: weniger Treffer, höhere Sicherheit.")
     st.markdown("**Umgebungen für ICP**")
     for name, key in ENV_KEYS.items():
         st.checkbox(name, key=key, help=K.ENV_HELP[name])
@@ -194,7 +194,7 @@ st.markdown("## 🧪 ICP: die Eltern des Servicegrads aus Umgebungen")
 d1.metric("Identifizierte Eltern", names_of(b.identified), help="Schnittmenge aller Mengen, mit denen die Verteilung des Servicegrads in allen Umgebungen gleich erscheint.")
 d2.metric("Wahre Eltern", names_of(K.TRUE_PARENTS_OF_Y), help="Nachfrage, Faktor und Wetter wirken direkt auf den Servicegrad.")
 d3.metric("Angenommene Mengen", f"{len(b.result.accepted)} von {len(b.table)}", help="Mengen der übrigen fünf Größen, deren Invarianz nicht verworfen wird (p > α).")
-d4.metric("Ergebnis ⊆ wahre Eltern", "ja" if b.covered else "nein", delta=f"Umgebungen: {len(envs)}", delta_color="off", help="ICP garantiert: mit Wahrscheinlichkeit mindestens 1 − α liegt das Ergebnis in den wahren Eltern.")
+d4.metric("Ergebnis ⊆ wahre Eltern", "ja" if b.covered else "nein", delta=f"Umgebungen: {len(envs)}", delta_color="off", help="ICP garantiert bei gültigen Tests und ohne Eingriff in den Servicegrad: mit Wahrscheinlichkeit mindestens 1 − α liegt das Ergebnis in den wahren Eltern.")
 st.plotly_chart(build_icp_chart(b), width="stretch", key="icp_chart")
 verdict(verdict_icp(b))
 st.dataframe(build_icp_table(b), hide_index=True, width="stretch")
@@ -253,7 +253,7 @@ st.markdown(
     """
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
-| **Das Rauschen ist nicht Gauß'sch (LiNGAM)** | Bei Gauß-Rauschen ist die Reihenfolge nicht bestimmt: eine Auswahl, mit überzähligen Kanten; schon bei kleinem Gauß-Anteil kippt es (Experimente 1 und 2). | Wie falsch darf das Diagramm sein? |
+| **Das Rauschen ist nicht Gauß'sch (LiNGAM)** | Bei Gauß-Rauschen ist die Reihenfolge nicht bestimmt: eine Auswahl, mit überzähligen Kanten; schon bei kleinem nicht-gaußschem Anteil (Exzess-Kurtosis unter etwa 0,75) kippt es (Experimente 1 und 2). | Wie falsch darf das Diagramm sein? |
 | **Linear, alle Größen beobachtet (LiNGAM)** | Eine verborgene Ursache gibt einen sauber gerichteten Graphen mit falschen Kanten, ohne Warnung (Experiment 4). Nichtlineare additive Rauschmodelle sind nicht gebaut. | Wann geht es gar nicht? |
 | **Bekannte Umgebungen ohne Eingriff in die Zielgröße (ICP)** | Wird der Servicegrad selbst verschoben, ist keine Menge invariant: leere Menge (Experiment 4). | Wie falsch darf das Diagramm sein? |
 | **Genug Stärke und Stichprobe (ICP)** | Zu wenige oder zu schwache Umgebungen, zu kleine Stichprobe: ICP nennt nur einen Teil der Eltern oder nichts (Experiment 3). | Welches Verfahren, gemessen woran? |
